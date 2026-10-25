@@ -187,7 +187,7 @@ class SESDisentangledBaseLLM(nn.Module):
         denom = m.sum(dim=1).clamp(min=1e-6)         # [B, 1]
         return (h * m).sum(dim=1) / denom            # [B, H]
 
-    # ===== [新增] last-token pooling：左/右 padding 都安全 =====
+
     @staticmethod
     def last_token_pool(hidden, attention_mask):
 
