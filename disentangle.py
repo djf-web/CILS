@@ -436,11 +436,12 @@ def main(
 
             loss_orth = decorrelation_loss(z_ses, z_task)
 
+            loss_adv = loss_adv_ce + loss_orth
+
             loss = (
                 loss_task
-                + alpha_ses * loss_ses
+                + loss_ses
                 + beta_adv * loss_adv
-                + gamma_orth * loss_orth
             ) / grad_accum
 
             loss.backward()
@@ -452,7 +453,6 @@ def main(
                     loss_task.item(),
                     loss_ses.item(),
                     loss_adv.item(),
-                    loss_orth.item(),
                 ],
             ):
                 running[k] += v
