@@ -31,7 +31,11 @@ class SESDisentangledBaseLLM(nn.Module):
         self.z_task_proj = nn.Sequential(
             nn.Linear(hs, hs // 2), nn.GELU(), nn.Linear(hs // 2, task_dim))
         self.ses_classifier = nn.Linear(ses_dim, num_ses)
-        self.adv_ses_classifier = nn.Linear(task_dim, num_ses)
+        self.adv_ses_classifier = nn.Sequential(
+            nn.Linear(task_dim, task_dim // 2),
+            nn.GELU(),
+            nn.Linear(task_dim // 2, num_ses),
+        )
         self.task_classifier = nn.Linear(task_dim, num_task)
 
     @staticmethod
