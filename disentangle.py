@@ -423,7 +423,7 @@ def main(
           
             z_task_rev = grad_reverse(z_task, adv_alpha)
             adv_logits = model.adv_ses_classifier(z_task_rev)
-            loss_adv = F.cross_entropy(adv_logits, ses_labels)
+            loss_adv_ce = F.cross_entropy(adv_logits, ses_labels)
 
           
             def decorrelation_loss(z1, z2):
