@@ -396,7 +396,7 @@ if __name__ == "__main__":
                         default="bias_neuron_index/z.pt")
     parser.add_argument("--max_length", type=int, default=512)
     parser.add_argument("--max_samples", type=int, default=500)
-    parser.add_argument("--layer_index", type=int, default=16)
+    parser.add_argument("--layer_index", type=int, default=4)
     parser.add_argument("--ses_dim", type=int, default=4096)
     parser.add_argument("--task_dim", type=int, default=4096)
     parser.add_argument("--probe_epochs", type=int, default=200)
