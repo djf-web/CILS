@@ -45,6 +45,22 @@ class SESDisentangledBaseLLM(nn.Module):
         return (h * m).sum(1) / m.sum(1).clamp(min=1e-6)
 
 
+    @staticmethod
+    def last_token_pool(hidden, attention_mask):
+        B, L = attention_mask.shape
+        positions = torch.arange(
+            L, device=attention_mask.device
+        ).unsqueeze(0).expand(B, L)
+
+        last_idx = (attention_mask * positions).max(dim=1).values
+
+        return hidden[
+            torch.arange(B, device=hidden.device),
+            last_idx
+        ].float()
+
+
+
 
 def generate_prompt(instruction, input_text=None):
     if input_text:
@@ -191,8 +207,8 @@ def train_E_task_probe(model, tokenizer, data_path, device,
             outs = model.base(input_ids=ids, attention_mask=am,
                               output_hidden_states=True, return_dict=True)
             h = outs.hidden_states[model.layer_index]
-            E = model.masked_mean(h, hm).cpu()
-            Es.append(E)
+            E_last = model.last_token_pool(h, am).cpu()
+            Es.append(E_last)
             ys.append(batch["task_label"])
 
     E_all = torch.cat(Es, 0)
@@ -236,11 +252,13 @@ def locate_sample_bias_neurons(model, probe_E_task, batch, device):
             return_dict=True,
         )
         h = outs.hidden_states[model.layer_index]
-        E = model.masked_mean(h, hm)                
-        z_task = model.z_task_proj(E)
 
 
-        logits_E = probe_E_task(E)
+        E_last = model.last_token_pool(h, am)
+        z_task = model.z_task_proj(E_last)
+        
+        
+        logits_E = probe_E_task(E_last)
         loss_E = F.cross_entropy(logits_E, task_y)
 
     
