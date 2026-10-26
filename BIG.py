@@ -343,7 +343,7 @@ def compute_global_bias_neurons(model, probe_E_task, tokenizer, data_path, devic
 def main(
     base_model: str = "autodl-tmp/llm",
     ckpt_dir: str = "output_ses_disentangle_base",
-    data_path: str = "train1.json",
+    data_path: str = "train.json",
     save_path: str = "bias_neuron_index/z.pt",
     max_length: int = 512,
     max_samples: int = 500,
